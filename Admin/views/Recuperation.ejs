@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"> 
+  <link rel="stylesheet" type="text/css" href="/css/all.css"> 
+  <link rel="stylesheet" type="text/css" href="/css/all.min.css"> 
+  <link rel="stylesheet" type="text/css" href="./cssPerso/Login.css"> 
+
+  <title>Document</title>
+</head>
+<body>
+
+  <style>
+    
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 40%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 2px 16px;
+  background-color: #2C9BBA;
+  color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+
+  </style>
+
+
+
+  <div class="login-page">
+    <div>
+      <div id='alert' class="alert" role="alert">
+      </div>
+    <div class="form">
+      <form class="login-form">
+          <small id="questionSecret" class="form-text "></small>
+        <!-- <input type="text" id="questionSecret"  disabled/> -->
+        <input type="text" id="reponse" placeholder="reponse"/>
+        
+      </form>
+      <button onclick="Verification()">Confirmer</button>
+    </div>
+  </div>
+  </div>
+  <script>
+          var getAlert=document.getElementById('alert');
+
+    if(!sessionStorage.getItem('question')||!sessionStorage.getItem('answer')){
+      location.replace(" http://localhost:3000/");
+      }else{
+        document.getElementById('questionSecret').innerHTML=sessionStorage.getItem('question');
+      }
+
+const Verification=()=>{
+var reponse=document.getElementById('reponse');
+      if(sessionStorage.getItem('answer')){
+        if(!reponse.value){
+        getAlert.classList.add("alert-danger");
+        getAlert.innerHTML="Veuillez donner la reponse !!!!"
+        }else if(reponse.value != sessionStorage.getItem('answer')){
+          getAlert.classList.add("alert-danger");
+          getAlert.innerHTML="la reponse est incorrect !!!!"
+        }else{
+          sessionStorage.removeItem('question');
+          sessionStorage.removeItem('answer');
+          location.replace(" http://localhost:3000/UpdateChange");
+        }
+      }
+}
+  </script>
+
+  <script src="/js/bootstrap.min.js"></script>
+<script src="/js/index.js"></script>
+<script src="/js/jquery.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+
+<style>
+  ::-webkit-input-placeholder { /* Edge */
+  color: white;
+}
+
+:-ms-input-placeholder { /* Internet Explorer */
+  color: white;
+}
+
+::placeholder {
+  color: white;
+}
+</style>
+<section class="p-4 my-container">
+  <div class="d-flex justify-content-between">     
+    <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+    <a href="/api/v1/reparation/form"  rel="inscription new user " class="btn my-4 btnblue"><i class="fas fa-tools"> ajouter une reparation</i></a>
+  </div>  
+    <div class="container">
+      <br/>
+      <div>
+        <div id='alert' class="alert" role="alert">
+        </div>
+
+      <div class="container">
+        <div class="d-flex justify-content-end ">
+          <div class="searchbar">
+            <input class="search_input" id="search_input" onkeyup="Filter()"  type="text"  placeholder="Search...">
+            <span class="search_icon" > <i class="fas fa-search"></i> </span>
+          </div>
+        </div>
+      </div>
+
+      <table  id="TableReparation"  class="table">
+        <thead>
+          <tr>
+            <th scope="col text-white">#</th>
+            <th scope="col text-white">Nom de la piece </th>
+            <th scope="col text-white">Achat </th>
+            <th scope="col text-white">Vente</th>
+            <th scope="col text-white">Prix de la reparation </th>
+            <th scope="col text-white">Option</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i = 0; i < reparation.length; i++) { %>
+            <tr>
+                <th scope="row" ><%= i + 1 %> </th>
+                <td><%= reparation[i].name%></td>
+                <td><%= reparation[i].PrixAchat %></td>
+                <td><%= reparation[i].PrixVente %></td>
+                <td><%= reparation[i].PrixReparation %></td>
+                <td>
+                  <div>
+                    <a href="/api/v1/reparation/update_reparation?id=<%= reparation[i]._id%>" class="btn border-shadow update">
+                        <span class="btn btn-success update "><i class="far fa-edit"></i></span>
+                    </a>
+                    <span class="btn btn-danger" type="button" id="delete" onclick="element('<%= reparation[i]._id%>')"  data-id="<%= reparation[i]._id%>"><i class="fas fa-trash"></i> </span>
+                    
+                </div>
+          
+                </td>
+            </tr>
+                <% } %>
+
+
+        </tbody>
+      </table>
+
+    </div>
+    </section>
+<script>
+   if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+   //fonction de filtrage 
+   const Filter=()=>{
+    var input=document.getElementById('search_input');
+    var   filter = input.value.toUpperCase();
+    var table = document.getElementById("TableReparation");
+    var tr = table.getElementsByTagName("tr");
+    
+    for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+   }
+
+/**********************************************************************/
+
+//fonction de suppresion 
+const element=(id)=>{
+      // const supp=document.getElementById('delete');
+      var getAlert=document.getElementById('alert');
+
+      const elemt=id;
+       const link=`/api/v1/reparation/api/updateReparation/${elemt}`
+          fetch(link, {
+              method:'DELETE'
+            })
+            .then((data)=>{
+              getAlert.classList.add("alert-danger");
+               getAlert.innerHTML="la donnée a été supprimé avec succès !!!"
+              setTimeout(function(){
+                document.location.reload()
+              }, 1000);
+            })
+            .catch(err=>console.log(err));
+      }
+ </script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

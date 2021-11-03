@@ -1,0 +1,406 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+<style>
+  ::-webkit-input-placeholder { /* Edge */
+  color: white;
+}
+
+:-ms-input-placeholder { /* Internet Explorer */
+  color: white;
+}
+
+::placeholder {
+  color: white;
+}
+
+/*******************************************************************************************/
+.rounded-full {
+  border-radius: 100%;
+}
+</style>
+
+<section class="p-4 my-container">
+    <div class="d-flex justify-content-between">     
+        <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+    </div>
+    <div id='alert' class="alert col-sm-6 text-center" role="alert" style="left: 300px;">
+    </div>
+      <!-- Page Content -->
+      <div id="page-content-wrapper" style="background-color: white;">
+        <br/>
+ 
+
+        <div class="container-fluid px-4">
+            <div class="row g-3 my-2">
+              <div class="col-md-3">
+                <div class="p-3 bg-info text-white  shadow-sm d-flex justify-content-around align-items-center rounded">
+                    <div>
+                        <h4 class="fs-2" id="Semaine"></h4>
+                        <p class="fs-5">Historique </p>
+                    </div>
+                    <i
+                        class="fas fa-hand-holding-usd fs-1 border rounded-full  p-3 bg-white text-info"></i>
+                </div>
+            </div>
+                <div class="col-md-3">
+                    <div class="p-3 bg-primary text-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                        <div>
+                            <h4 class="fs-2" id="days"> </h4>
+                            <p class="fs-5">Jours</p>
+                        </div>
+                        <i class="fas fa-money-bill-wave-alt fs-1 border rounded-full bg-white text-primary p-3"></i>
+                    </div>
+                </div>
+
+
+                <!-- <table class="table bg-white rounded shadow-sm  table-hover"> -->
+
+                <div class="col-md-3">
+                    <div class="p-3 bg-secondary text-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                        <div>
+                            <h4 class="fs-2" id='Moins'></h4>
+                            <p class="fs-5">Mensuelle</p>
+                        </div>
+                        <i class="fas fa-wallet fs-1 border rounded-full 
+                        bg-white text-secondary p-3"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3 bg-dark text-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                        <div>
+                            <h4 class="fs-2" id="Annee"></h4>
+                            <p class="fs-5">Année</p>
+                        </div>
+                        <i class="fas fa-money-check-alt fs-1 border rounded-full 
+                        bg-white text-dark p-3"></i>
+                    </div>
+                </div>
+            </div>
+
+              <div class="container">
+                <br/>
+                <div class="d-flex justify-content-end ">
+                  <div class="searchbar">
+                    <input class="search_input" id="search_input" onkeyup="Filter()"  type="text"  placeholder="Search...">
+                    <span class="search_icon" > <i class="fas fa-search"></i> </span>
+                  </div>  
+
+                </div>
+                <div class="d-flex justify-content-end " >
+                  <div class="col-sm-2">
+                    <br/> 
+                    <div class="dropdown">
+                      <button onclick="myFunction()" class="dropbtn btn col-ms-3 btnblue">Dropdown <i class="fas fa-chevron-down"></i></button>
+                      <div id="myDropdown" class="dropdown-content " class="">
+                        <a onclick="FilterDay('today')">Aujourd'hui</a>
+                        <a onclick="FilterDay('Hier')">Hier</a>
+                        <a onclick="FilterWeaks()">Cette semaine</a>
+                        <a onclick="FilterDaysOf(7)" >Derniers 7 Jours</a>
+                        <a onclick="FilterDaysOf(15)">Derniers 15 Jours</a>
+                        <a onclick="FilterDaysOf(30)">Derniers 30 jours</a>
+                        <a onclick="">Ce mois</a>
+                      </div>
+                    </div>
+
+                    </div>
+                  
+                </div>
+              </div>
+              </div>
+              <h3 class="fs-4 mb-3">Recent Orders</h3>
+                <div class="col">
+                  <br/>
+                    <table id="TableProduct" class="table table-bordered">
+                        <thead>
+                          <tr class="header">
+                            <th scope="col">#</th>
+                            <th scope="col">Nom du client</th>
+                            <th scope="col">Produit</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Gain obtenu</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Options</th>
+
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% for(var i = 0; i < history.length; i++) { %>
+                              <tr class="trFilter">
+                                <th scope="row" ><%= i + 1 %></th>
+                                <td><%= history[i].name %></td>
+                                <td><%= history[i].nomProduit %></td>
+                                <td><%= history[i].type %></td>
+                                <td class="GainObtenue"><%= history[i].Gain %></td>
+                                <td class="DateTime" data-DateElement='<%= history[i].date %>'></td>
+                                <td > <span class="btn btn-danger" type="button" id="delete" onclick="element('<%= history[i]._id%>')"  data-id="<%= history[i]._id%>"><i class="fas fa-trash"></i> </span></td>
+                              </tr>
+                                <% } %>
+
+                        </tbody>
+                      </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<script>
+
+if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+   
+  var table=document.getElementById('TableProduct');
+  var trtable = table.getElementsByClassName("trFilter");
+   var td=document.getElementsByClassName('DateTime');
+   var CalcFilter=0;
+   var SemaineDom=document.getElementById('Semaine');
+
+   /**********************************************************************/
+   //Pour affichage des dates
+   for (let i = 0; i < td.length; i++) {
+      today = new Date(td[i].getAttribute('data-DateElement'));
+  
+          var dd = String(today.getDate()).padStart(2, '0');
+          var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+          var yyyy = today.getFullYear();
+          today = dd + '/' + mm + '/' + yyyy;
+          td[i].innerHTML= dd + '/' + mm + '/' + yyyy;
+   }
+
+/**********************************************************************/
+   function FilterDay(data){
+    DayMoney=0;
+       var dateNow=new Date();
+      if(data==='Hier'){
+       dateNow.setDate(dateNow.getDate() - 1);
+     }else if(data==='today'){
+       dateNow.setDate(dateNow.getDate());
+     }
+  /**********************************************************************/
+          var dd = String(dateNow.getDate()).padStart(2, '0');
+          var mm = String(dateNow.getMonth() + 1).padStart(2, '0'); //January is 0!
+          var yyyy = dateNow.getFullYear();
+          dateNow = dd + '/' + mm + '/' + yyyy;
+
+     for (let i = 0; i < trtable.length; i++) { 
+          td = trtable[i].getElementsByTagName("td")[4];
+            if((td.innerText == dateNow)){
+              DayMoney=DayMoney+Number(trtable[i].getElementsByTagName("td")[3].innerText);
+              trtable[i].style.display = "";
+            }else{
+              trtable[i].style.display = "none";
+            }
+        }
+        SemaineDom.innerHTML=DayMoney +' Da ';
+
+}
+
+
+/************************************************************************************/
+function FilterWeaks(){
+  FilterWeaksMoney=0;
+  var Day=new Date();
+        //le jour le la semaine
+        Jours=Number(Day.getDay());
+        //la date du jour
+        dt = Day.getDate();
+        if(Jours >= 0){
+                   var jour = Number(dt) - Jours
+                    year = Day.getFullYear();
+                   month = Day.getMonth();
+                   DebutDeSemaine = new Date(year, month, jour)   
+        }
+
+        for (let i = 0; i < trtable.length; i++) { 
+          td = trtable[i].getElementsByTagName("td")[4];
+          dateCompareTable=new Date(td.getAttribute('data-dateelement'));
+            if((dateCompareTable >= DebutDeSemaine) &&(dateCompareTable <= new Date() )){
+              FilterWeaksMoney=FilterWeaksMoney+Number(trtable[i].getElementsByTagName("td")[3].innerText);
+              trtable[i].style.display = "";
+            }else{
+              trtable[i].style.display = "none";
+            }
+        }
+        SemaineDom.innerHTML=FilterWeaksMoney +' Da ';
+
+
+}
+
+ /**********************************************************************/
+  const Filter=()=>{
+     const input = document.getElementById("search_input");
+     const inputStr = input.value.toUpperCase();
+     document.querySelectorAll('#TableProduct tr:not(.header)').forEach((tr) => {
+    const anyMatch = [...tr.children]
+      .some(td => td.textContent.toUpperCase().includes(inputStr));
+    if (anyMatch) tr.style.removeProperty('display');
+    else tr.style.display = 'none';
+  });
+   }
+/********************************************************************************/
+function FilterDaysOf(jours){
+  DayMoney=0
+    var dateNow=new Date();
+  if(jours== 0){dateNow.setDate(dateNow.getDate() - 0);}
+  if(jours== 7){dateNow.setDate(dateNow.getDate() - 7);}
+  else if(jours== 15){dateNow.setDate(dateNow.getDate() - 15);}
+  else if(jours== 30){dateNow.setDate(dateNow.getDate() - 30);}
+  else if(jours== 30){dateNow.setDate(dateNow.getDate() - 30);}
+  //with days 
+  for (let i = 0; i < trtable.length; i++) { 
+          td = trtable[i].getElementsByTagName("td")[4];
+          dateCompareTable=new Date(td.getAttribute('data-dateelement'));
+            if((dateCompareTable >= dateNow) &&(dateCompareTable <= new Date() )){
+              DayMoney=DayMoney+Number(trtable[i].getElementsByTagName("td")[3].innerText);
+              trtable[i].style.display = "";
+            }else{
+              trtable[i].style.display = "none";
+            }
+        }
+        SemaineDom.innerHTML=DayMoney +' Da ';
+
+}
+/********************************************************************************/
+var dateDebut;
+         var dateFins;
+
+         dateTme = new Date();
+
+          dt = dateTme.getDate();
+          year = dateTme.getFullYear();
+          month = dateTme.getMonth();
+          const lastday =(y,m)=>{
+                return  new Date(y, m +1, 0).getDate();
+              }
+             
+            var EndDay=lastday(year,month);
+
+            dateDebut=new Date(year,month,'1');
+            dateFins=new Date(year,month,EndDay);
+/*****************************************/
+function ThisMouth() {
+  var MouthMoney=0
+        for (let i = 0; i < trtable.length; i++) { 
+          td = trtable[i].getElementsByTagName("td")[4];
+          dateCompareTable=new Date(td.getAttribute('data-dateelement'));
+          if((dateCompareTable >= dateDebut)&&(dateCompareTable <= dateFins )){
+            MouthMoney=MouthMoney+Number(trtable[i].getElementsByTagName("td")[3].innerText);
+              trtable[i].style.display = "";
+            }else{
+              trtable[i].style.display = "none";
+            }
+        }
+        SemaineDom.innerHTML=MouthMoney +' Da ';
+  
+}
+
+
+/*************************************************************************/
+/**********************************************************************/
+
+//fonction de suppresion 
+const element=(id)=>{
+      // const supp=document.getElementById('delete');
+      var getAlert=document.getElementById('alert');
+
+      const elemt=id;
+       const link=`/api/v1/History/deleteHistory/${elemt}`
+          fetch(link, {
+              method:'DELETE'
+            })
+            .then((data)=>{
+              getAlert.classList.add("alert-danger");
+               getAlert.innerHTML="la donnée 3 été supprimé avec succès !!!"
+              setTimeout(function(){
+                document.location.reload()
+              }, 2000);
+            })
+            .catch(err=>console.log(err));
+      }
+/**********************************************************************/
+      
+
+
+
+  //For the day 
+  var ForToday=0;
+  var ForMouth=0;
+  var ForYear=0;
+  var dateSemain;
+  var dayDom=document.getElementById('days');
+  var MoinsDom=document.getElementById('Moins');
+  var AnneeDom=document.getElementById('Annee');
+
+  var today = new Date();
+  /**********************************************************************/
+          var dd = String(today.getDate()).padStart(2, '0');
+          var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+          var yyyy = today.getFullYear();
+          today = dd + '/' + mm + '/' + yyyy;
+
+   /**********************************************************************/
+  //  var td=document.getElementsByClassName('DateTime');
+   var GainTd=document.getElementsByClassName('GainObtenue');
+   /**********************************************************************/
+   for (let i = 0; i < td.length; i++) {
+     var TableDates=new Date(td[i].getAttribute('data-DateElement'));
+        var dateTable = new Date(td[i].getAttribute('data-DateElement'));
+        var TYearTable = dateTable;
+          var dd = String(dateTable.getDate()).padStart(2, '0');
+          var mm = String(dateTable.getMonth() + 1).padStart(2, '0'); //January is 0!
+          var yyyy = dateTable.getFullYear();
+          dateTable = dd + '/' + mm + '/' + yyyy;
+        if(today === dateTable){
+            ForToday=Number(GainTd[i].innerText)+ForToday;
+        }
+      
+
+        if((TableDates >= dateDebut)&&(TableDates <= dateFins )){
+          ForMouth=Number(GainTd[i].innerText)+ForMouth;
+        }
+
+        if(year === TableDates.getFullYear()){
+          ForYear=Number(GainTd[i].innerText)+ForYear;
+        }        
+   }
+
+   dayDom.innerHTML=ForToday +' Da ';
+   MoinsDom.innerHTML=ForMouth +' Da ';
+   AnneeDom.innerHTML=ForYear +' Da ';
+   SemaineDom.innerHTML=CalcFilter +' Da ';
+
+ /* When the user clicks on the button, 
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+
+    </script>
+
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

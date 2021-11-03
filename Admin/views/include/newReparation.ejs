@@ -1,0 +1,42 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+
+<section class="p-4 my-container">
+
+    <!-- form handling -->
+    <div class="container ">
+     <div class="d-flex justify-content-between">     
+       <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+     </div> 
+       <br>
+       <div class="row d-flex justify-content-center ">
+         <h2 class="text-center">Nouveau Client </h2>
+         <br>
+   
+   
+         <div class="col-sm-6">
+           <form action="/api/v1/client/api/clientCredit" method="POST">
+                <div class="form-group">
+                 <label for="Client">Nom du Client : </label>
+                  <input type="text" class="form-control" id="name"  name="name" placeholder="Nom du Client"  pattern="[a-zA-Z]*" required>
+                  <span id="Message" class="text-danger"></span>
+                 <br>
+                </div>
+
+            </form>
+        </div>
+
+
+        </div>
+        </div>
+        </section>
+
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

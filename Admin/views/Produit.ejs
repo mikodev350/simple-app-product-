@@ -1,0 +1,103 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+<style>
+  ::-webkit-input-placeholder { /* Edge */
+  color: white;
+}
+
+:-ms-input-placeholder { /* Internet Explorer */
+  color: white;
+}
+
+::placeholder {
+  color: white;
+}
+</style>
+
+<section class="p-4 my-container">
+    <div class="d-flex justify-content-between">     
+      <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+      <a href="/api/v1/Product/create_newproduct"  rel="inscription new user " class="btn my-4 btnblue"> <i class="fas fa-mobile"></i>  ajouter un Produit</a>
+
+      <!-- <a href="/create_newproduct" target="_blank" rel="inscription new user " class="btn my-4 btnblue"> <i class="fas fa-mobile"></i>  ajouter un Produit</a> -->
+    </div> 
+    <div class="container">
+      <br/>
+      <div>
+        <div id='alert' class="alert" role="alert">
+        </div>
+       </div>
+
+      <div class="container">
+        <div class="d-flex justify-content-end ">
+          <div class="searchbar">
+            <input class="search_input" id="search_input" onkeyup="Filter()"  type="text"  placeholder="Search...">
+            <span class="search_icon" > <i class="fas fa-search"></i> </span>
+          </div>
+        </div>
+      </div>
+
+      
+      <table id="TableProduct" class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">id</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Quantité </th>
+            <th scope="col">Prix d'achat </th>
+            <th scope="col">Prix de vente</th>
+            <th scope="col">Vente</th>
+            <th scope="col">Option </th>
+
+          </tr>
+        </thead>
+        <tbody>
+            <%- include('include/_show') %>
+
+
+         
+        </tbody>
+      </table>
+  </section>
+
+
+ <script>
+   if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+   //fonction de filtrage 
+   const Filter=()=>{
+    var input=document.getElementById('search_input');
+    var   filter = input.value.toUpperCase();
+    var table = document.getElementById("TableProduct");
+    var tr = table.getElementsByTagName("tr");
+    
+    for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+   }
+
+/**********************************************************************/
+
+// console.log(localStorage.getItem("token"));
+
+ </script>
+
+
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

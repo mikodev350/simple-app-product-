@@ -1,0 +1,350 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+<section class="p-4 my-container">
+  <div class="d-flex justify-content-between">     
+    <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+    </div>
+ <!-- form handling -->
+ <div class="container ">
+    <br>
+    <div class="row d-flex justify-content-center ">
+      <h2 class="text-center">Nouveau Client </h2>
+      <br>
+      <div>
+        <div id='alert' class="alert" role="alert">
+        </div>
+       </div>
+
+
+      <div class="col-sm-6">
+        <form>
+          <div class="form-group">
+              <label for="Client">Nom du Client : </label>
+               <input type="text" class="form-control" id="name"  name="name" placeholder="Nom du Client"  pattern="[a-zA-Z]*" required>
+               <span id="Message" class="text-danger"></span>
+              <br>
+              <div class="form-group">
+                <label for="Numero">Numero de telephone  : </label>
+                <input type="text" id="Numero"  class="form-control"  id="Quantite" placeholder="phone number "  >
+                <span id="NumeroError" class="text-danger"></span>
+
+                <br>
+              </div>
+           </div>
+           
+           <div>
+            <div class=" col-sm-4 ">
+              <input class="form-control" onkeyup="Filter()" id="search_input"  type="search" placeholder="Search..." aria-label="Search">
+              <br>
+            </div>
+            <table class="table table-bordered" id="TableSelect">
+                <thead>
+                  <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Quantité </th>
+                    <th scope="col">Prix de vente</th>
+                    <th scope="col">quantiter acheters</th>
+                    <th scope="col">Prix du paiement (credit) </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for(var i = 0; i < stocks.length; i++) { %>
+                    <tr>
+                        <th scope="row" >
+                            <div class="form-check">
+                                <input class="form-check-input checkboxProduct" type="checkbox" name="product" id="flexCheckDefault" data-id="<%= stocks[i]._id%>" required>
+                              </div>
+                        </th>
+                        <td ><%= stocks[i].nomProduit %></td>
+                        <td name="quntiterProduct" class="quntiterVerification" data-quantite="<%= stocks[i].Quantite %>" ><%= stocks[i].Quantite %></td>
+                        <td name="prixInital" data-prix="<%= stocks[i].PrixVente %>"><%= stocks[i].PrixVente %></td>
+                        <td>
+                            <input type="number" min="0" value="0" name="Qantiter" class="form-control InputQantiter" placeholder="Quantite acheter par le client " pattern="[0-9]*"  >
+                        </td>
+                        <td>
+                          <input type="number" min="0" value="0" name="credit" class="form-control creditInput " placeholder="Prix du credit" pattern="[0-9]" >
+                      </td>
+                    </tr>
+                    <% } %>
+
+                </tbody>
+              </table>
+
+
+          </div>
+    </form>
+    <div class="d-flex justify-content-around">
+      <a href="http://localhost:3000/api/v1/client/ClientsElement" type="button" class="btn btn-secondary">Annuler</a>
+   <input type="button" value="Ajouter"  class="btn btn-primary " onclick="GetSelected()" />
+  </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<script>
+
+if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+
+var VerificationDeLaCantiter=document.getElementsByClassName('quntiterVerification');
+var checkboxProduct=document.getElementsByClassName('checkboxProduct');
+var InputQantiter=document.getElementsByClassName('InputQantiter');
+var creditInput=document.getElementsByClassName('creditInput');
+
+for (let i = 0; i < VerificationDeLaCantiter.length; i++) {
+  if (VerificationDeLaCantiter[i].innerText==='0'){
+    checkboxProduct[i].disabled = true;
+    InputQantiter[i].disabled = true;
+    creditInput[i].disabled = true;
+    /******************************************************/
+    VerificationDeLaCantiter[i].style.color="red"
+      VerificationDeLaCantiter[i].style.fontWeight="bold"
+  }
+}
+    var markedCheckbox = document.getElementsByName('product');
+    var inputs = document.getElementsByName('Qantiter');
+
+    var ReduireProduct = document.getElementsByName('quntiterProduct');
+    var credit = document.getElementsByName('credit');
+    var prixInital = document.getElementsByName('prixInital');
+    
+
+   function GetSelected(){
+        //INPUT NAME  
+    var Nom=document.getElementById('name');
+    var name=Nom.value;
+    /*********************************************************************************/
+         //INPUT NUMBER  
+    var Num=document.getElementById('Numero');
+    var numero=Num.value;
+ /*********************************************************************************/
+    let values=[];
+    let identify=[];
+    //qantier
+    let cantiter=[];
+    let total=[];
+    let PrixFinal=[]
+    //prix de vente 
+   let prixcredit=[]
+   let prixI=[]
+   //nbr check
+   var nbrcheck=0;
+   var nbrErr=0;
+   var getAlert=document.getElementById('alert');
+
+
+/*********************************************************************************/
+
+   /*******************************************************************************/
+   // INPUT NAME
+   if(!name){
+      Nom.classList.add("is-invalid");
+      document.getElementById('Message').innerHTML="SVP,Veuillez entrer le nom !!!";
+      
+    }else if(!name.match(/^[a-zA-Z ]+$/)){
+      Nom.classList.add("is-invalid");
+      document.getElementById('Message').innerHTML="Seuls les caractères alphabétiques sont autorisés !!!"
+      nbrErr++
+}
+   /*******************************************************************************/
+   // INPUT NUMBER
+  //  if(!Numero){
+  //     Num.classList.add("is-invalid");
+  //     document.getElementById('NumeroError').innerHTML="SVP,Veuillez entrer le Numero de telephone  !!!"
+  //     nbrErr++
+  //   }
+  if(!numero){
+      var match=""
+    }else if(!numero.match(/^(0|\+213|00213)(5|6|7)[0-9]{8}$/)){
+      Num.classList.add("is-invalid");
+      document.getElementById('NumeroError').innerHTML="Numéros de téléphone invalides !!!"
+      nbrErr++
+    }
+
+
+    for (let index = 0; index < markedCheckbox.length; index++) {
+        if (markedCheckbox[index].checked){
+          nbrcheck=nbrcheck+1;
+          //verification du tableux 
+                     if((!inputs[index].value) ||( inputs[index].value ==="0")){
+                      nbrErr++
+
+                           getAlert.classList.add("alert-danger");
+                           getAlert.innerHTML="la Quantiter ne doit pas etre vide"
+                             //  document.location.reload()
+
+                      }else if(Number(inputs[index].value) > Number(ReduireProduct[index].getAttribute('data-quantite'))){
+                        nbrErr++
+                            getAlert.classList.add("alert-danger");
+                                getAlert.innerHTML="la Quantité ne doit pas dépasser la quantité de produit !!!"
+                      } else{
+                        //Prendre les Id des Produits
+                          identify.push(markedCheckbox[index].getAttribute('data-id'));
+                          //Quantiter de Produit 
+                          values.push(Number(ReduireProduct[index].getAttribute('data-quantite')));
+
+                         if(!inputs[index].value.match(/^[0-9]+$/) ){ 
+                          nbrErr++
+                           getAlert.classList.add("alert-danger");
+                           getAlert.innerHTML="Seuls les caractères numériques sont autorisés !!!"
+                             //  document.location.reload()                         
+                      }else{
+                        // Pour reduire le nbr produit
+                         cantiter.push(Number(inputs[index].value));
+                      }
+                      // Prix de vente
+                        prixI.push(Number(prixInital[index].getAttribute('data-prix')));
+                        
+                       if(!credit[index].value.match(/^[0-9]+$/)){
+                        nbrErr++
+
+                        setTimeout(function(){
+                           getAlert.classList.add("alert-danger");
+                               getAlert.innerHTML="Seuls les caractères numériques sont autorisés !!!"
+                              }, 1000);
+                      }else{
+                         prixcredit.push(Number(credit[index].value));
+                      }
+          }
+              // if(inputs[index].value !="0"){
+              //   identify.push(markedCheckbox[index].getAttribute('data-id'));
+              //    values.push(Number(ReduireProduct[index].getAttribute('data-quantite')));
+              //     //identifier  la quantiter  et credit
+              //      if(!inputs[index].value.match(/^[0-9]+$/) ){ 
+              //            setTimeout(function(){
+              //              getAlert.classList.add("alert-danger");
+              //              getAlert.innerHTML="Seuls les caractères numériques sont autorisés !!!"
+              //                //  document.location.reload()
+              //           }, 1000);
+                         
+              //         }else{
+              //            cantiter.push(Number(inputs[index].value));
+              //         }
+              //       prixI.push(Number(prixInital[index].getAttribute('data-prix')));
+
+              //         if(!credit[index].value.match(/^[0-9]+$/)){
+              //           setTimeout(function(){
+              //              getAlert.classList.add("alert-danger");
+              //                  getAlert.innerHTML="Seuls les caractères numériques sont autorisés !!!"
+              //                 }, 1000);
+              //         }else{
+              //            prixcredit.push(Number(credit[index].value));
+              //         }
+
+        // }else{
+        //   setTimeout(function(){
+        //     getAlert.classList.add("alert-danger");
+        //   getAlert.innerHTML="les valeur ne doit pas être à 0 (quantiter) !!!!! "
+        //   //  document.location.reload()
+        //   }, 1000);
+        // }
+
+    }
+
+
+}
+
+var SommeCredit=0;
+for (let i = 0; i < identify.length; i++) {
+          total[i]=values[i] - cantiter[i];
+       
+          PrixFinal[i]=prixI[i] - prixcredit[i];
+
+          if(total[i] <= 0){
+           total[i] = 0;
+          }
+          if(PrixFinal[i] <= 0){
+            PrixFinal[i] = 0;
+          }
+
+}
+
+for (let i = 0; i < PrixFinal.length; i++) {
+  SommeCredit=SommeCredit + PrixFinal[i];
+}
+if(!name|| nbrcheck == 0 ||nbrErr !=0 ){
+setTimeout(function(){
+  console.log("prb ici");
+        getAlert.classList.add("alert-danger");
+        getAlert.innerHTML="toute les condition ne sont pas remplie"
+        }, 1000);
+
+}else{
+  var today = new Date();
+          var dd = String(today.getDate()).padStart(2, '0');
+          var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+          var yyyy = today.getFullYear();
+          today = dd + '/' + mm + '/' + yyyy;
+
+          
+  let Element=JSON.stringify({
+   name,
+   numero,
+   identify,
+   total,
+   PrixFinal,
+   cantiter,
+   SommeCredit,
+   today,
+   prixcredit
+  })
+    fetch('/api/v1/client/api/clientCredit',{
+    method:'POST',
+    headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    },
+    body:Element
+  })  .then((response) => response.json())
+    .then((user) => {
+    if(user.errors){
+      getAlert.classList.add("alert-danger");
+    getAlert.innerHTML=user.errors.msg
+    }else{
+        getAlert.classList.add("alert-success");
+        getAlert.innerHTML="Data Inserted Successfully!"
+         setTimeout(function(){
+          location.replace("http://localhost:3000/api/v1/client/ClientsElement");
+        }, 1000);
+    }
+  })
+    .catch(err=>console.log(err))
+}
+}
+
+
+/****************************************************************************/
+ //fonction de filtrage 
+ const Filter=()=>{
+    var input=document.getElementById('search_input');
+    var   filter = input.value.toUpperCase();
+    var table = document.getElementById("TableSelect");
+    var tr = table.getElementsByTagName("tr");
+    
+    for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+   }
+</script>
+
+
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

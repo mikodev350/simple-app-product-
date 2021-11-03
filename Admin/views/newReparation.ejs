@@ -1,0 +1,163 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+
+<section class="p-4 my-container">
+
+    <!-- form handling -->
+    <div class="container ">
+     <div class="d-flex justify-content-between">     
+       <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+     </div> 
+     <div>
+      <div id='alert' class="alert" role="alert">
+      </div>
+       <br>
+       <div class="row d-flex justify-content-center ">
+         <h2 class="text-center">Formulaire de Reparation  </h2>
+         <br><br><br><br>
+
+         
+        <div class="col-sm-6">
+          <div>
+            <div id='alert' class="alert" role="alert">
+            </div>
+           <form>
+                <div class="form-group">
+                      <label for="Client">Nom de la piece  : </label>
+                       <input type="text" class="form-control" id="name"  name="name" placeholder="Nom de la piece" required>
+                       <span id="Message" class="text-danger"></span>
+                       <br>
+                </div>
+                <div class="form-group  ">
+                       <label for="PrixAchat">Prix d'achat (Da) : </label>
+                       <div class="col-sm-4">
+                           <input type="number"  min=0 value="0"     name="PrixAchat" class="form-control" id="PrixAchat" placeholder="Prix d'achat " required>
+                            <br>
+                        </div> 
+        
+                </div>
+        
+                <div class="form-group">
+                        <label for="PrixVente" >Prix de vente (Da) : </label>
+                        <div class="col-sm-4">
+                          <input type="number"  min=0 value="0"  name="PrixVente"  class="form-control" id="PrixVente" placeholder="Prix de vente"   required>
+                           <br>
+                        </div> 
+                </div>  
+                
+                <div class="form-group">
+                    <label for="PrixReparation" >Prix de la reparation (Da) : </label>
+                    <div class="col-sm-4">
+                      <input type="number"  min=0  value="0" name="PrixReparation" id="PrixReparation"  class="form-control" id="PrixReparation" placeholder="Prix de la reparation"  >
+                       <br>
+                    </div> 
+
+            </div> 
+            </form>
+            
+            <!-- <button class="btn my-4" type="submit"  onclick="subbmit()" id="menu-btn"> Confirmer</button> -->
+            <div >
+              <a href="http://localhost:3000/api/v1/reparation/" 
+              type="button" class="btn btn-secondary" style="margin-right: 250px;
+              ">Annuler</a>
+                <button class="btn my-4" type="submit"  onclick="subbmit()" id="menu-btn"> Confirmer</button>
+            </div>
+       </div>
+</div>
+</div>
+</section>
+
+<script>
+
+if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+
+   
+  // function disableReparation(){
+  //   var getAlert=document.getElementById('alert');
+
+  //   if(document.getElementById('PrixVente').value){
+  //     document.getElementById('PrixReparation').disabled = true;
+  //   }else{
+  //     document.getElementById('PrixReparation').disabled = false;
+
+  //   }
+  // }
+
+   function subbmit(){
+    var getAlert=document.getElementById('alert');
+     var name = document.getElementById('name');
+     var PrixAchat = document.getElementById('PrixAchat');
+     var PrixVente = document.getElementById('PrixVente');
+     var PrixReparation = document.getElementById('PrixReparation');
+     var err=0;
+/****************************************************************************/
+if(!name.value){
+       name.classList.add("is-invalid");
+      document.getElementById('Message').innerHTML="SVP,Veuillez entrer le nom !!!";
+      err++
+    }
+else if(!PrixAchat.value.match(/^[0-9]+$/)|| !PrixVente.value.match(/^[0-9]+$/) || !PrixReparation.value.match(/^[0-9]+$/)) {
+  getAlert.classList.add("alert-danger");
+    getAlert.innerHTML="'Seuls les caractères numériques sont autorisés !!!'"
+  err++
+}
+   else if(Number(PrixVente.value)<Number(PrixAchat.value)){
+        getAlert.classList.add("alert-danger");
+        getAlert.innerHTML="Le prix de vente doit être supérieur ou égale au prix d'achat !"
+    }
+    // else if(Number(PrixVente.value) && !Number(PrixVente.value)){
+    //   getAlert.classList.add("alert-danger");
+    //     getAlert.innerHTML="Vous devez donner un prix d'achat !!"
+    // }
+else{
+  var Elementbody=JSON.stringify({
+   name:name.value,
+   PrixAchat:PrixAchat.value,
+   PrixVente:PrixVente.value,
+   PrixReparation:PrixReparation.value
+  })
+  
+  fetch('/api/v1/reparation/api/reparation',{
+    method:'POST',
+    headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    },
+    body:Elementbody
+  })
+  .then((response) => response.json())
+    .then((user) => {
+    if(user.errors){
+      getAlert.classList.add("alert-danger");
+    getAlert.innerHTML=user.errors.msg
+    }else{
+        getAlert.classList.add("alert-success");
+        getAlert.innerHTML="Data Inserted Successfully!"
+         setTimeout(function(){
+          location.replace("http://localhost:3000/api/v1/reparation/");
+        }, 2000);
+    }
+  })
+    .catch(err=>console.log(err))
+  
+}
+
+    // getAlert.classList.add("alert-success");
+    // getAlert.innerHTML="Data Inserted Successfully!"
+    // setTimeout(function(){
+    //   document.location.reload()
+    // }, 1000);
+  // document.location.reload()
+}
+</script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

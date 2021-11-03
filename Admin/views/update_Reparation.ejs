@@ -1,0 +1,132 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+
+<section class="p-4 my-container">
+
+    <!-- form handling -->
+    <div class="container ">
+     <div class="d-flex justify-content-between">     
+       <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+     </div> 
+       <br>
+       <div class="row d-flex justify-content-center ">
+         <h2 class="text-center">Formulaire de Reparation  </h2>
+         <br><br><br><br>
+
+         
+        <div class="col-sm-6">
+           <form>
+                <div class="form-group">
+                  <input type="hidden" name="id" id="id" value="<%= piece._id %>">
+                      <label for="Client">Nom de la piece  : </label>
+                       <input type="text" class="form-control" id="name" value="<%=piece.name %>" name="name" placeholder="Nom de la piece" required>
+                       <span id="Message" class="text-danger"></span>
+                       <br>
+                </div>
+                <div class="form-group  ">
+                       <label for="PrixAchat">Prix d'achat (Da) : </label>
+                       <div class="col-sm-4">
+                           <input type="number"  min=0   name="PrixAchat" class="form-control" value="<%=piece.PrixAchat %>" id="PrixAchat" placeholder="Prix d'achat " required>
+                            <br>
+                        </div> 
+        
+                </div>
+        
+                <div class="form-group">
+                        <label for="PrixVente" >Prix de vente (Da) : </label>
+                        <div class="col-sm-4">
+                          <input type="number"  min=0  value="<%=piece.PrixVente %>"  name="PrixVente"  class="form-control" id="PrixVente" placeholder="Prix de vente" required>
+                           <br>
+                        </div> 
+                </div>  
+                
+                <div class="form-group">
+                    <label for="PrixReparation" >Prix de la reparation (Da) : </label>
+                    <div class="col-sm-4">
+                      <input type="number"  min=0  value="<%=piece.PrixReparation %>"  name="PrixReparation"  class="form-control" id="PrixReparation" placeholder="Prix de la reparation" required>
+                       <br>
+                    </div> 
+
+            </div> 
+            </form>
+
+            <button class="btn my-4" type="submit"  onclick="subbmit()" id="menu-btn"> Confirmer</button>
+       </div>
+</div>
+</div>
+</section>
+
+
+<script>
+   if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+   var getAlert=document.getElementById('alert');
+
+  // function disableReparation(){
+
+  //   if(document.getElementById('PrixVente').value){
+  //     document.getElementById('PrixReparation').disabled = true;
+  //   }else{
+  //     document.getElementById('PrixReparation').disabled = false;
+
+  //   }
+  // }
+
+   function subbmit(){
+    var id=document.getElementById('id').value;
+    var getAlert=document.getElementById('alert');
+     var name = document.getElementById('name');
+     var PrixAchat = document.getElementById('PrixAchat');
+     var PrixVente = document.getElementById('PrixVente');
+     var PrixReparation = document.getElementById('PrixReparation');
+     var err=0;
+/****************************************************************************/
+if(!name.value){
+       name.classList.add("is-invalid");
+      document.getElementById('Message').innerHTML="SVP,Veuillez entrer le nom !!!";
+      err++
+    }
+else if(!PrixAchat.value.match(/^[0-9]+$/)|| !PrixVente.value.match(/^[0-9]+$/) || !PrixReparation.value.match(/^[0-9]+$/)) {
+  getAlert.classList.add("alert-danger");
+    getAlert.innerHTML="'Seuls les caractères numériques sont autorisés !!!'"
+  err++
+}
+   else if(Number(PrixVente.value)<Number(PrixAchat.value)){
+        getAlert.classList.add("alert-danger");
+        getAlert.innerHTML="Le prix de vente doit être supérieur ou égale au prix d'achat !"
+    }
+else{
+  var Elementbody=JSON.stringify({
+   name:name.value,
+   PrixAchat:PrixAchat.value,
+   PrixVente:PrixVente.value,
+   PrixReparation:PrixReparation.value
+  })
+  
+  fetch(`/api/v1/reparation/api/updateReparation/${id}`,{
+    method:'POST',
+    headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    },
+    body:Elementbody
+  }).then(res =>{
+
+    location.replace("http://localhost:3000/api/v1/reparation/");
+    
+    }).catch(err=>console.log(err));
+}
+
+  // document.location.reload()
+}
+</script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

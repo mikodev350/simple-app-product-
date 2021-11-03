@@ -1,0 +1,151 @@
+<% for(var i = 0; i < stocks.length; i++) { %>
+  <tr>
+      <th scope="row" ><%= i + 1 %> </th>
+      <td><%= stocks[i].nomProduit %></td>
+      <td class="QuantiteTable"><%= stocks[i].Quantite %></td>
+      <td><%= stocks[i].PrixAchat %></td>
+      <td><%= stocks[i].PrixVente %></td>
+      <td>
+          <div style="padding-top: 8px;">
+              <!-- Button trigger modal -->
+              <button type="button" onclick="getId('<%= stocks[i]._id%>','<%= stocks[i].Quantite %>')" data-dataElement="<%= stocks[i]._id%>"  class="btn btn-outline-success UpdateButtonTable " data-bs-toggle="modal" data-bs-target="#exampleModal" id="myBtn" >
+  <i class="fas fa-shopping-cart"></i>
+              </button>
+             <!-- Modal -->
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                  <div class="modal-body">
+                        <form>
+                          <div class="form-group">
+                            <label for="Quantite">la quantité acheter : </label>
+                            <input type="number" class="form-control" id="Quantite" placeholder="Quantite acheter">
+                            <span id="NumeroError" class="text-danger"></span>
+                          </div>
+                       </form>
+                       <div class="form-group text-center">
+                        <br>
+                         <button type="button" class="btn btn-outline-success  " onclick="QuantiterAcheter()" > Acheter </button>
+                        <br>
+                      </div>
+                  </div>
+                </div>
+              </div>
+           </div>
+          </div>        
+      </td>
+      <td>
+        <div>
+          <a href="/api/v1/Product/update_product?id=<%= stocks[i]._id%>"  class="btn border-shadow update ">
+              <span class="btn btn-success update "><i class="far fa-edit"></i></span>
+          </a>
+          <span class="btn btn-danger" type="button" id="delete" onclick="element('<%= stocks[i]._id%>')"  data-id="<%= stocks[i]._id%>"><i class="fas fa-trash"></i> </span>
+          
+      </div>
+
+      </td>
+
+
+  </tr>
+   <% } %>
+<script>
+  var TdQuantier=document.getElementsByClassName('QuantiteTable');
+  var UpdateButton=document.getElementsByClassName('UpdateButtonTable');
+  for (let i = 0; i < TdQuantier.length; i++) {
+    if (TdQuantier[i].innerText==='0'){
+      TdQuantier[i].style.color="red"
+      TdQuantier[i].style.fontWeight="bold"
+      UpdateButton[i].style.display = "none";
+
+      //.style.display = none;
+
+    }
+    // if ()   
+    // console.log(TdQuantier[i].innerText);
+
+  }
+  /**************************************************************************/
+     
+    var id = String;
+    var quandtiter=String;
+const getId=(idElement,quanti)=>{
+  id = idElement
+  quandtiter=quanti;
+}
+var getAlert=document.getElementById('alert');
+
+//fonction de suppresion 
+const element=(id)=>{
+      const supp=document.getElementById('delete');
+      //  const elemt=supp.getAttribute('data-id');
+      const elemt=id;
+       const link=`/api/v1/Product/api/All_product/${elemt}`
+      //  if (window.confirm("voulez-vous supprimer l'element en question ?")) {
+
+          fetch(link, {
+              method:'DELETE'
+            }).then((response)=>{response.json()})
+            .then((data)=>{
+              getAlert.classList.add("alert-danger");
+               getAlert.innerHTML="la donnée a été supprimé avec succès !!!"
+              setTimeout(function(){
+                document.location.reload()
+              }, 1000);
+            })
+            .catch(err=>console.log(err));
+          
+          //   .then((response)=>{response.json()
+          //     alert("Data Deleted Successfully!");
+          //       return(location.reload())})
+          // // .then((data)=>{})
+          // .catch(err=>console.log(err));
+      // }else{
+      //   // return (0);
+      //   console.log('Annuler');
+      // }
+      
+  }
+
+
+
+
+
+  const QuantiterAcheter=()=>{
+
+  var Num = document.getElementById('Quantite');
+  var quantiterVenter =Num.value;
+
+    if(!quantiterVenter.match(/^[0-9]+$/)){
+      Num.classList.add("is-invalid");
+      document.getElementById('NumeroError').innerHTML="Seuls les caractères numériques sont autorisés !!!"
+    }
+    else if( Number(quantiterVenter) > Number(quandtiter)){
+      Num.classList.add("is-invalid");
+      document.getElementById('NumeroError').innerHTML="La quantité de vente ne doit pas dépasser la quantité  de stock"
+    }
+    else{
+      let Element=JSON.stringify({
+        id,
+        quantiterVenter
+      })
+      fetch('/api/v1/Product/api/quantiter',{
+    method:'POST',
+    headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    },
+    body:Element
+  }).then(res => location.reload())
+  .then(res => location.reload());
+    }
+
+
+}
+
+
+
+</script>

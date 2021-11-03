@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand d-flex flex-column align-item-start" id="sidebar">
+    <a href="#" class="navbar-brand text-light mt-5">
+        <div class="display-5 font-weight-bold">Magasin</div>
+    </a>
+    <ul class="navbar-nav d-flex flex-column mt-5 w-100">
+        
+        <li class="nav-item w-100">
+
+            <a href="http://localhost:3000/api/v1/client/ClientsElement" class="nav-link text-light pl-4">Client</a>
+        </li>
+        <li class="nav-item w-100">
+            <a href="http://localhost:3000/api/v1/Product/" class="nav-link text-light pl-4">Produit</a>
+        </li>
+        <li class="nav-item w-100">
+            <a href="http://localhost:3000/api/v1/reparation/" class="nav-link text-light pl-4">Reparation</a>
+        </li>
+        <li class="nav-item w-100">   
+            <a href="http://localhost:3000/api/v1/Product/ZeroProduct" class="nav-link text-light pl-4">Dépôts</a>
+        </li>
+        <li class="nav-item w-100">
+            <a href="http://localhost:3000/api/v1/History/" class="nav-link text-light pl-4">Historique</a>
+        </li>
+        <li class="nav-item w-100">
+            <a href="http://localhost:3000/Settings" class="nav-link text-light pl-4">Settings</a>
+        </li>
+        <li class="nav-item w-100">
+            <a onclick="Deconnection()" class="nav-link text-light pl-4">Deconnection</a>
+        </li>
+
+       
+    </ul>
+</nav>
+
+<script>
+    Deconnection=()=>{
+        localStorage.removeItem("token");
+        location.replace(" http://localhost:3000/");
+    }
+</script>

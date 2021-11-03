@@ -1,0 +1,268 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+<style type="text/css">
+  button:focus{
+    outline: none;
+  }
+  .btn-acc i{
+    padding: 10px;
+    /*
+    width: 30px;
+    height: 30px;
+    */
+  }
+  .btn-acc i.down{
+    transform: rotateZ(90deg);
+  }
+  
+  .btn-acc-active i{
+    color: white;
+    background: #21AAD1;
+  }
+  .btn-acc{
+    width: 100%;
+    color: #101719;
+    background: white;
+    border: 1px solid #EEEEEE;
+    text-align: left;
+    padding:0;
+    transition: 0.3s;
+  }
+  .btn-acc:hover{
+    color: #21AAD1;
+  }
+  .btn-acc-active,.btn-acc-active:hover{
+    color: white;
+    background: #101719;
+  }
+    .p-acc{
+      max-height: 0;
+      overflow: hidden;
+      border:1px solid #EEEEEE;
+      transition: 0.5s;
+      padding: 0px 10px;
+      text-align: justify;
+      margin: 0;
+    }
+    .p-acc-show{
+      max-height: 1000px;
+    }
+  </style>
+  
+<section class="p-4 my-container">
+    <div class="d-flex justify-content-between">     
+      <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+      </div>
+      <div>
+        <div id='alert' class="alert" role="alert">
+        </div>
+       </div>
+      <div class="row d-flex justify-content-center ">
+        <h2 class="text-center">Parametres  </h2>
+        <br> <br>
+
+          <section class="container-fluid">
+            <br>
+            <div class="row justify-content-center">
+              <div class="col-sm-offset-8 col-sm-4">
+                <button onclick="openAcc(this)" class="btn-acc"><i class="fa fa-chevron-right"></i> Changer le mot de passe
+                </button>
+                <div class="p-acc">
+                  <br>
+                  <form >
+                    <div class="form-group">
+                      <label for="ActuelPassword">Actuel :</label>
+                      <input type="password" class="form-control" id="ActuelPassword" >
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="passwordNouveau">Nouveau</label>
+                      <input type="passwordNouveau" class="form-control" id="passwordNouveau" >
+                    </div>
+                    <br/>
+
+                    <div class="form-group">
+                      <label for="ConfirmerPassword">Confirmer</label>
+                      <input type="password" class="form-control" id="ConfirmerPassword" >
+                    </div>
+                    <br/>
+
+                  </form>
+                  <div class="d-flex justify-content-center">
+                    <button type="button" onclick="ChangePWD()" class="btn btn-success">Success</button>
+                  </div>
+                  
+
+                  <br/>
+
+                 </div>
+                
+                <button onclick="openAcc(this)" class="btn-acc"><i class="fa fa-chevron-right"></i> En qu'à oublier du mot de passe</button>
+                <div class="p-acc">
+                  <br>
+                  <form >
+                  <label for="question">Sélectionner une question : </label>
+                  <select class="form-select" aria-label="Default select example" id="question">
+                    <option selected></option>
+                    <option value="Quel est le nom de jeune fille de ta mère?">Quel est le nom de jeune fille de ta mère?</option>
+                    <option value="Quel est le nom de votre premier animal de compagnie ?">Quel est le nom de votre premier animal de compagnie ?
+                  </option>
+                    <option value="Quel était votre première voiture?">Quel était votre première voiture?</option>
+                    <option value="Quelle école primaire avez-vous fréquentée ?">Quelle école primaire avez-vous fréquentée ?
+                  </option>
+                    <option value="Quel est le nom de la ville où vous êtes né ?">Quel est le nom de la ville où vous êtes né ?
+                  </option>
+                  </select>
+                  <br/>
+                  <div class="form-group">
+                    <label for="Reponse">Reponse : </label>
+                    <input type="text" class="form-control" id="Reponse" >
+                  </div>
+                </form>
+
+                  <br/>
+                  <div class="d-flex justify-content-center">
+                    <button type="button" class="btn btn-success" onclick="onQuestion()" >Success</button>
+                  </div>
+                  <br/>
+
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+<script>
+
+
+
+          b_acc=document.getElementsByClassName("btn-acc");
+b_acc[3].click();
+	function openAcc(b) {
+		for (var i = 0; i < b_acc.length; i++) {
+			b_acc[i].classList.remove("btn-acc-active");
+			b_acc[i].nextElementSibling.classList.remove("p-acc-show");
+			b_acc[i].firstElementChild.classList.remove("fa-chevron-down");
+			b_acc[i].firstElementChild.classList.add("fa-chevron-right");
+		}
+			b.classList.add("btn-acc-active");
+			b.nextElementSibling.classList.add("p-acc-show");
+			b.firstElementChild.classList.remove("fa-chevron-right");
+			b.firstElementChild.classList.add("fa-chevron-down");
+	}
+</script>
+
+      </section>
+<!-- include footer -->
+
+
+<script>
+    var Question =document.getElementById('question'); 
+  var Reponse =document.getElementById('Reponse'); 
+
+
+
+
+    var getAlert=document.getElementById('alert');
+
+   if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+
+   const ChangePWD=()=>{
+     const ActuelPwd=document.getElementById('ActuelPassword');
+     const NewPwd=document.getElementById('passwordNouveau');
+     const ConfirmePwd=document.getElementById('ConfirmerPassword');
+  if(!ActuelPwd.value || !NewPwd.value || !ConfirmePwd.value){
+    setTimeout(function(){
+      getAlert.classList.add("alert-danger");
+      getAlert.innerHTML="Veuillez Remplir toutes les conditions !!!!"
+    }, 3000);
+  }else if(NewPwd.value.length < 6 || ConfirmePwd.value.length < 6){
+    setTimeout(function(){
+      getAlert.classList.add("alert-danger");
+        getAlert.innerHTML=" Your password is too short ( min=6)!!!!"
+    }, 3000);
+  }
+     else if(NewPwd.value!=ConfirmePwd.value){
+      setTimeout(function(){
+        getAlert.classList.add("alert-danger");
+        getAlert.innerHTML="les mots de passes Ne sont pas les mêmes!!"
+    }, 3000);
+     
+     }else {
+      let data=JSON.stringify({
+      email:localStorage.getItem("email"),
+      actualPassword: ActuelPwd.value,
+      newPassword: NewPwd.value
+      })
+
+      fetch('/ChangePassword',{
+    method:'POST',
+    headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    },
+    body:data
+  }) .then((response) => {response.json()}) //2
+  .then((message) => {
+    setTimeout(function(){
+      getAlert.classList.add("alert-success");
+    getAlert.innerHTML="le Mots de passe a changer !!!"
+    }, 2000);
+  })
+     }
+   }
+
+
+
+const onQuestion=()=>{
+
+  if(!Question.value || !Reponse.value){
+    setTimeout(function(){
+      getAlert.classList.add("alert-danger");
+      getAlert.innerHTML="Veuillez Remplir toutes les conditions !!!!"
+    }, 3000);
+
+  }else{
+    let data=JSON.stringify({
+      email:localStorage.getItem("email"),
+      questionForgot: Question.value,
+      reponseForgot: Reponse.value
+      })
+
+      fetch('/Question',{
+    method:'POST',
+    headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    },
+    body:data
+  }) .then((response) => {response.json()}) //2
+  .then((message) => {
+    getAlert.classList.add("alert-success");
+      getAlert.innerHTML=" la question a ete inséré avec succès  !!!"
+    setTimeout(function(){
+      getAlert.innerHTML=""
+      getAlert.classList.remove("alert-success");
+      
+    }, 3000);
+  })
+     }
+  
+}
+
+
+
+//    if(localStorage.getItem("email")){
+// }
+
+
+</script>
+<%- include('include/_footer') %>
+<!-- /include footer -->

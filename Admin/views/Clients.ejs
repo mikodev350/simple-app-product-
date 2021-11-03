@@ -1,0 +1,232 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+<style>
+    ::-webkit-input-placeholder { /* Edge */
+    color: white;
+  }
+  
+  :-ms-input-placeholder { /* Internet Explorer */
+    color: white;
+  }
+  
+  ::placeholder {
+    color: white;
+  }
+  </style>
+<section class="p-4 my-container">
+    <div class="d-flex justify-content-between">     
+      <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+      <a href="/api/v1/client/create_newClient"  rel="inscription new user " class="btn my-4 btnblue"> <i class="fas fa-user"></i> ajouter un Client</a>
+    </div> 
+<!-- <div class="container">
+  <br/>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+          <div class="modal-header">
+             <span class="close">&times;</span>
+          </div>
+          <form method="POST">
+            <div class="modal-body ">
+                  <p> Versement : </p>
+                      <div class="form-group  ">
+                         <input type="number" class="form-control  " id="versement"  placeholder="Versement">
+                         <span id="NumeroError" class="text-danger"></span>
+
+                        <br>
+                      </div>
+                        <div class="d-flex justify-content-center" >
+                           <button type="button" class="btn btn-outline-success"   id="versement" onclick="versementprix()">Success</button>
+                        </div>
+                        <br>
+            </div>
+          </form>
+
+      </div>
+    </div>
+  
+  </div> -->
+  <div>
+    <div id='alert' class="alert" role="alert">
+    </div>
+
+    <div class="d-flex justify-content-end ">
+      <div class="searchbar">
+        <input class="search_input" id="search_input" onkeyup="Filter()"  type="text"  placeholder="Search...">
+        <span class="search_icon" > <i class="fas fa-search"></i> </span>
+      </div>
+    </div>
+
+     <br>
+  <div class="container">
+       <div class="row">
+              <table class="table table-bordered" id="tableClient">
+             <thead>
+                 <tr class="bg-info">
+                     <th scope="col">#</th>
+                     <th scope="col">Nom</th>
+                     <th scope="col"> tel </th>
+                     <th scope="col">Produit achete</th>
+                     <th scope="col">Quantite acheter</th>
+                     <!-- <th scope="col">prix de Vente</th> -->
+                     <th scope="col">reste total</th>
+                     <th scope="col">Historique date</th>
+                     <th scope="col">Options</th>
+                 </tr>
+              </thead>
+            <tbody>
+              <% for(var i = 0; i < clients.length; i++) { %>
+                <tr>
+                    <th scope="row" ><%= i + 1 %></th>
+                    <td><%= clients[i].name %></td>
+                    <td><%= clients[i].Tel %></td>
+                    <td><%= clients[i].nomDesProduit.toString() %></td>
+                    <td><%= clients[i].quantiter.toString() %></td>
+                    <!-- <td><%= clients[i].prixdeVente.toString() %></td> -->
+                    <td>
+                      <span data-credit="<%= clients[i].credit %>" id="credit" class="credit"><%= clients[i].credit.toString() %></span>
+                    </td>
+                    <td><%= clients[i].date.toString() %></td>
+
+                    <td>        
+                      <div>
+
+                        <!-- <span  type="button" class="btn btn-success" data-identification ="<%= clients[i]._id%>"  id="myBtn" ><i class="fas fa-shopping-cart"></i> </span>   onclick="getId()" -->
+                     <!-- Button trigger modal -->
+                     <!-- Button trigger modal -->
+                          <button type="button" onclick="getId('<%= clients[i]._id%>','<%=clients[i].credit %>')"  class="btn btn-outline-success "  data-bs-toggle="modal" data-bs-target="#exampleModal" id="myBtn" >
+                           <i class="fas fa-shopping-cart" ></i>
+                          </button>
+                    
+                          <!-- Modal -->
+                          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <form>
+                                      <p> Versement : </p>
+                                      <div class="form-group  ">
+                                       <input type="number" class="form-control  " id="versement"  placeholder="Versement">
+                                       <span id="NumeroError" class="text-danger"></span>
+                                       <br>
+                                      </div>
+                   
+                                    </form>
+                                    <div class="d-flex justify-content-center" >
+                                      <button type="button" class="btn btn-outline-success"   id="Success" onclick="versementprix()">Success</button>
+                                  </div>
+                                   </div>
+                              </div>
+                            </div>
+                    </div>
+                         <span type="button" id="delete" class="btn btn-danger" onclick="supprimer('<%= clients[i]._id%>')" data-id="<%= clients[i]._id%>"><i class="fas fa-trash"></i></span>
+
+                    </div>   
+                   </td>
+                    
+                </tr>
+                 <% } %>
+           </tbody>
+            </table>
+
+  </div>
+  </div>
+</section>
+ 
+  <script>
+      if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+  var id = String;
+  var resteTotal = String;
+  
+  const getId=(idElement,credit)=>{
+     id = idElement    
+     resteTotal = credit    
+    }
+
+    var getAlert=document.getElementById('alert');
+
+
+      Filter=()=>{
+    var input=document.getElementById('search_input');
+    var   filter = input.value.toUpperCase();
+    var table = document.getElementById("tableClient");
+    var tr = table.getElementsByTagName("tr");
+    
+    for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+   }
+
+   const supprimer=(id)=>{
+    // const supp=document.getElementById('delete');
+      //  const elemt=supp.getAttribute('data-id');
+      const elemt=id
+       const link=`/api/v1/client/api/AllclientCredits/${elemt}`;
+            fetch(link, {
+                method:'DELETE'
+              })
+              .then(res => res.json())
+              .then((data)=>{
+              getAlert.classList.add("alert-danger");
+               getAlert.innerHTML="la donnée a été supprimé avec succès !!!"
+              setTimeout(function(){
+                document.location.reload()
+              }, 1000);
+            })
+            .catch(err=>console.log(err));
+       }
+/************************************************************************************/
+   
+function versementprix(){
+  // var id=btn.getAttribute('data-identification')
+  const linkVersement=`/api/v1/client/api/AllclientCredits/${id}`;
+  const Versement=document.getElementById('versement');
+
+
+  if(!Versement.value){
+    Versement.classList.add("is-invalid");
+      document.getElementById('NumeroError').innerHTML="SVP,Veuillez entrer le  Versement"
+    }
+    else if(Number(Versement.value) > Number(resteTotal)){
+      Versement.classList.add("is-invalid");
+      document.getElementById('NumeroError').innerHTML="Le versement ne doit pas dépasser  le reste !!"
+    }
+    else{
+  const versement=Versement.value;
+  //console.log(data);
+  //const  Element=JSON.stringify({data})
+    fetch(linkVersement,{
+    method:'POST',
+    headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    },
+    body:JSON.stringify({id ,versement})
+  }) .then(res => res.json())
+     .then((data)=>{document.location.reload()})
+     .catch(err=>console.log(err));
+}
+}
+
+  </script>
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

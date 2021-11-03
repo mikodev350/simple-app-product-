@@ -1,0 +1,62 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- include Menu -->
+
+
+<!---- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -->
+<section class="p-4 my-container">
+  <div class="d-flex justify-content-between">     
+    <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+    </div>
+    <div class="container">
+      <div class="row d-flex justify-content-center ">
+        <h2 class="text-center">Les produits en Rupture  </h2>
+        <br>
+        <br>
+        <br>
+        <div>
+          <div class="row">
+            <div class="col-sm-3">
+            </div>
+            <div class="col-sm-6">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Produit</th>
+                  <th scope="col">Quantite</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(var i = 0; i < ZeroProduct.length; i++) { %>
+                  <tr>
+                    <th scope="row" ><%= i + 1 %> </th>
+                    <td><%= ZeroProduct[i].nomProduit %></td>
+                    <td><%= ZeroProduct[i].Quantite %></td>
+
+                  </tr>
+                <% } %>
+              </tbody>
+             </table>
+            </div>
+          </div>
+         
+    </div>
+    </section>
+<script>
+    if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000/");
+   }
+</script>
+
+
+
+<!---- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -->
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

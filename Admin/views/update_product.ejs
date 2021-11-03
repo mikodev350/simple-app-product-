@@ -1,0 +1,137 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- include Menu -->
+<%- include('include/_Menu') %>
+<!-- /include Menu -->
+
+<!-- /include header -->
+<!-- form handling -->
+<div class="container ">
+  <div class="d-flex justify-content-between">     
+    <button class="btn my-4" id="menu-btn"><i class="fas fa-bars"></i> Menu</button>
+  </div>
+    <br><br>
+    <div>
+      <div id='alert' class="alert" role="alert">
+      </div>
+    <div class="row ">
+      
+      <h2 class="text-center">Modifier le Produit</h2>
+   
+      <br>
+      <div class="col-sm-6">
+        <img src="/image/phone.svg" class="col-sm-12" alt="">
+      </div>
+      <div class="col-sm-6">
+        <form method="POST" id="update_product">
+          <div class="form-group">
+            <input type="hidden" name="id" id="id" value="<%= stock._id %>">
+              <label for="nomProduit">Nom du Produit : </label>
+               <input type="text" class="form-control"   name="nomProduit" id="nomProduit"  placeholder="Nom"  value="<%=stock.nomProduit %>" required>
+              <br>
+           </div>
+           <div class="form-group">
+            <label for="Quantite">Quantité de Produit : </label>
+            <input type="number" name="Quantite"  min=0  max="10000" value="<%=stock.Quantite %>" class="form-control" id="Quantite" placeholder="Quantité " required>
+            <br>
+          </div>
+          <div class="form-group  ">
+            <label for="PrixAchat">Prix d'achat (Da) : </label>
+            <div class="col-sm-4">
+            <input type="number"  min=0   name="PrixAchat" class="form-control" value="<%=stock.PrixAchat %>"  id="PrixAchat" placeholder="Prix d'achat " required>
+            <br></div> 
+
+          </div>
+
+          <div class="form-group">
+            <label for="PrixVente" >Prix de vente (Da) : </label>
+            <div class="col-sm-4">
+            <input type="number" value="<%=stock.PrixVente %>"  min=0   name="PrixVente"  class="form-control" id="PrixVente" placeholder="Prix de vente" required>
+            <br>
+          </div> 
+          </div>
+    </form>
+    <button class="btn my-4" type="submit"  onclick="UpdateElement()"id="menu-btn"> Confirmer</button>
+
+      </div>
+    </div>
+</div>
+
+<script>
+      var getAlert=document.getElementById('alert');
+
+   if(!localStorage.getItem("token")){
+    location.replace(" http://localhost:3000");
+   }
+   
+  function UpdateElement(){
+    var id=document.getElementById('id').value;
+     var Produit=document.getElementById('nomProduit');
+    var quantite=document.getElementById('Quantite');
+    var prixAchatInput=document.getElementById('PrixAchat');
+    var PrixVenteInput=document.getElementById('PrixVente');
+
+
+    var nomProduit=Produit.value;
+    var Quantite=quantite.value;
+    var PrixAchat=prixAchatInput.value;
+    var PrixVente=PrixVenteInput.value;
+
+    // console.log(id);
+    // console.log(nomProduit);
+    // console.log(PrixAchat);
+    // console.log(PrixVente);
+
+
+    if(!nomProduit || !Quantite || !PrixAchat || !PrixVente){
+       getAlert.classList.add("alert-danger");
+        getAlert.innerHTML="toute les condition ne sont pas remplie"
+    } else if(!PrixVente.match(/^[0-9]+$/) || !PrixAchat.match(/^[0-9]+$/)){
+          getAlert.classList.add("alert-danger");
+        getAlert.innerHTML="Seuls les caractères numériques sont autorisés !!"
+    }
+ else if(Number(PrixVente) < Number(PrixAchat)){
+        getAlert.classList.add("alert-danger");
+        getAlert.innerHTML="Le prix de vente doit être supérieur ou égale au prix d'achat !"
+    }
+    else{
+    let Element=JSON.stringify({
+        nomProduit,
+        Quantite,
+        PrixAchat,
+        PrixVente
+      })
+/***********************************************************************/
+
+      fetch(`/api/v1/Product/api/updateProduct/${id}`,{
+    method:'POST',
+    headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    },
+    body:Element
+  }).then((response) => response.json())
+    .then((user) => {
+    if(user.errors){
+      getAlert.classList.add("alert-danger");
+      getAlert.innerHTML=user.errors.msg
+    }else{
+        // getAlert.classList.add("alert-success");
+        // getAlert.innerHTML="Data Inserted Successfully!"
+         setTimeout(function(){
+          location.replace(" http://localhost:3000/api/v1/Product/");
+        }, 1000);
+    }
+  })
+  .catch(err=>console.log(err))
+
+    
+  
+  }
+}
+
+</script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
